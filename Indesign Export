@@ -1,0 +1,33 @@
+// Export each page of the active document as a separate InDesign document
+
+if (app.documents.length > 0) {
+    var mainDoc = app.activeDocument;
+    var docPath = mainDoc.filePath;
+    
+    if (docPath == "") {
+        alert("Please save the document before running the script.");
+    } else {
+        var totalPages = mainDoc.pages.length;
+        
+        for (var i = 0; i < totalPages; i++) {
+            var newDoc = app.documents.add();
+            var page = mainDoc.pages[i];
+            
+            // Copy all elements from the page to the new document
+            app.activeDocument = mainDoc;
+            page.pageItems.everyItem().duplicate(newDoc.pages[0]);
+
+            // Save the new document
+            var fileName = "Page_" + (i + 1) + ".indd";
+            var file = new File(docPath + "/" + fileName);
+            newDoc.save(file);
+            
+            // Close the new document
+            newDoc.close();
+        }
+        
+        alert("Export completed. Each page has been saved as a separate InDesign document.");
+    }
+} else {
+    alert("No document is open.");
+}
